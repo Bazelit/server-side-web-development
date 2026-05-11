@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hello, World!</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .header {
+        background: #0033a0;
+        padding: 1rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        color: white;
+      }
+
+      .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+
+      .title {
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+
+      .main {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        background: #f0f0f0;
+      }
+
+      .card {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        width: 100%;
+      }
+
+      h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #0033a0;
+      }
+
+      .message {
+        font-size: 2rem;
+        margin: 1.5rem 0;
+        padding: 1rem;
+        background: #e0a800;
+        color: white;
+        border-radius: 10px;
+      }
+
+      button {
+        background: #0033a0;
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 10px;
+        cursor: pointer;
+        margin: 0.5rem;
+      }
+
+      button:hover {
+        background: #002277;
+      }
+
+      .footer {
+        background: #333;
+        color: white;
+        text-align: center;
+        padding: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <img
+        class="logo"
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvp42kooFZKGZYiw4purSlyg0t9IGIeyBH3w&s"
+        alt="logo"
+      />
+      <div class="title">Выполнил Гумашян Давид Артакович 251-3210</div>
+      <div style="width: 100px"></div>
+    </header>
+
+    <main class="main">
+      <div class="card">
+        <h1>Динамический контент</h1>
+        <div class="message" id="helloMessage">Hello, World!</div>
+        <button id="changeBtn">Сменить фразу</button>
+        <button id="resetBtn">Сброс</button>
+      </div>
+    </main>
+
+    <footer class="footer">Задание для самостоятельной работы</footer>
+
+    <script>
+      const messages = [
+        "Hello, World!",
+        "Привет, Мир!",
+        "Hola, Mundo!",
+        "Bonjour le Monde!",
+        "Ciao, Mondo!",
+      ];
+
+      let currentIndex = 0;
+      const messageEl = document.getElementById("helloMessage");
+
+      document.getElementById("changeBtn").onclick = function () {
+        currentIndex = (currentIndex + 1) % messages.length;
+        messageEl.textContent = messages[currentIndex];
+      };
+
+      document.getElementById("resetBtn").onclick = function () {
+        currentIndex = 0;
+        messageEl.textContent = messages[0];
+      };
+    </script>
+  </body>
+</html>

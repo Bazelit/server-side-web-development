@@ -1,0 +1,17 @@
+{
+  "name": "feedback-form",
+  "version": "1.0.0",
+  "description": "Feedback form website with two pages - МосПолитех assignment (PHP Version)",
+  "keywords": [
+    "feedback",
+    "form",
+    "мосполитех",
+    "php"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "php": ">=7.4"
+  },
+  "note": "Это PHP проект. Используйте встроенный PHP сервер или хостинг с поддержкой PHP."
+}
