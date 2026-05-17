@@ -1,10 +1,13 @@
 <?php
 
+// ИНТЕРФЕЙС — контракт. Любой класс, который его реализует,
+// ОБЯЗАН иметь метод calculateSquare()
 interface CalculateSquare
 {
     public function calculateSquare(): float;
 }
 
+// КЛАСС ПРЯМОУГОЛЬНИК — реализует интерфейс
 class Rectangle implements CalculateSquare
 {
     private $width;
@@ -16,12 +19,14 @@ class Rectangle implements CalculateSquare
         $this->height = $height;
     }
 
+    // Обязательная реализация метода интерфейса
     public function calculateSquare(): float
     {
         return $this->width * $this->height;
     }
 }
 
+// КЛАСС КРУГ — тоже реализует интерфейс
 class Circle implements CalculateSquare
 {
     private $radius;
@@ -37,6 +42,7 @@ class Circle implements CalculateSquare
     }
 }
 
+// КЛАСС ТРЕУГОЛЬНИК — НЕ реализует интерфейс
 class Triangle
 {
     private $base;
@@ -54,25 +60,29 @@ class Triangle
     }
 }
 
-// Function to handle square calculation with proper messaging
+// ФУНКЦИЯ ДЛЯ ПРОВЕРКИ И ВЫВОДА
 function calculateAndPrintSquare($object)
 {
+    // get_class() — возвращает имя класса объекта (строка)
     $className = get_class($object);
     
+    // instanceof — проверяет, реализует ли объект интерфейс
     if ($object instanceof CalculateSquare) {
+        // Если реализует — считаем площадь
         echo "Объект класса {$className} имеет площадь: " . $object->calculateSquare() . "\n";
     } else {
+        // Если нет — выводим сообщение
         echo "Объект класса {$className} не реализует интерфейс CalculateSquare.\n";
     }
 }
 
-// Example usage
+// СОЗДАЕМ ОБЪЕКТЫ
 $rectangle = new Rectangle(5, 10);
 $circle = new Circle(7);
 $triangle = new Triangle(4, 6);
 
+// ПРОВЕРЯЕМ
 calculateAndPrintSquare($rectangle); // Объект класса Rectangle имеет площадь: 50
 calculateAndPrintSquare($circle);    // Объект класса Circle имеет площадь: 153.938...
-calculateAndPrintSquare($triangle);  // Объект класса Triangle не реализует интерфейс CalculateSquare.
-
+calculateAndPrintSquare($triangle);  // Объект класса Triangle не реализует интерфейс
 ?>

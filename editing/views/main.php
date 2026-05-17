@@ -15,14 +15,16 @@
     </tr>
     <tr>
         <td>
-            <h2><a href="/article/1" style="text-decoration: none; color: inherit;">Статья 1</a></h2>
-            <p>Всем привет, это текст первой статьи</p>
-            <a href="/article/1/edit">✎ Редактировать</a>
-            <hr>
-
-            <h2><a href="/article/2" style="text-decoration: none; color: inherit;">Статья 2</a></h2>
-            <p>Всем привет, это текст второй статьи</p>
-            <a href="/article/2/edit">✎ Редактировать</a>
+            <?php foreach ($articles as $article): ?>
+                <h2>
+                    <a href="/article/<?php echo $article['id']; ?>" style="text-decoration: none; color: inherit;">
+                        <?php echo htmlspecialchars($article['title']); ?>
+                    </a>
+                </h2>
+                <p><?php echo htmlspecialchars($article['content']); ?></p>
+                <a href="/article/<?php echo $article['id']; ?>/edit">✎ Редактировать</a>
+                <hr>
+            <?php endforeach; ?>
         </td>
 
         <td width="300px" class="sidebar">

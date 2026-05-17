@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hello, World!</title>
+    <title>Hello, World! - PHP Backend</title>
     <style>
       * {
         margin: 0;
@@ -29,13 +29,14 @@
       }
 
       .logo {
-        font-size: 1.5rem;
-        font-weight: bold;
+        height: 50px;
+        width: auto;
       }
 
       .title {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         font-weight: bold;
+        text-align: center;
       }
 
       .main {
@@ -58,7 +59,7 @@
       }
 
       h1 {
-        font-size: 3rem;
+        font-size: 2rem;
         margin-bottom: 1rem;
         color: #0033a0;
       }
@@ -81,6 +82,7 @@
         border-radius: 10px;
         cursor: pointer;
         margin: 0.5rem;
+        transition: background 0.2s;
       }
 
       button:hover {
@@ -93,6 +95,11 @@
         text-align: center;
         padding: 1rem;
       }
+
+      .loading {
+        opacity: 0.6;
+        pointer-events: none;
+      }
     </style>
   </head>
   <body>
@@ -100,7 +107,7 @@
       <img
         class="logo"
         src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvp42kooFZKGZYiw4purSlyg0t9IGIeyBH3w&s"
-        alt="logo"
+        alt="Логотип МосПолитеха"
       />
       <div class="title">Выполнил Гумашян Давид Артакович 251-3210</div>
       <div style="width: 100px"></div>
@@ -108,35 +115,55 @@
 
     <main class="main">
       <div class="card">
-        <h1>Динамический контент</h1>
-        <div class="message" id="helloMessage">Hello, World!</div>
-        <button id="changeBtn">Сменить фразу</button>
-        <button id="resetBtn">Сброс</button>
+        <h1>Динамический контент (PHP + AJAX)</h1>
+        <div class="message" id="helloMessage">Загрузка...</div>
+        <button id="changeBtn">Сменить фразу (через PHP)</button>
+        <button id="resetBtn">Сброс (через PHP)</button>
       </div>
     </main>
 
-    <footer class="footer">Задание для самостоятельной работы</footer>
+    <footer class="footer">задание для самостоятельной работы</footer>
 
     <script>
-      const messages = [
-        "Hello, World!",
-        "Привет, Мир!",
-        "Hola, Mundo!",
-        "Bonjour le Monde!",
-        "Ciao, Mondo!",
-      ];
-
-      let currentIndex = 0;
       const messageEl = document.getElementById("helloMessage");
 
+      // Функция загрузки данных с сервера (PHP)
+      async function loadMessage(action = "get") {
+        try {
+          const formData = new FormData();
+          formData.append("action", action);
+
+          const response = await fetch("backend.php", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) throw new Error("Ошибка сервера");
+
+          const data = await response.json();
+
+          if (data.success) {
+            messageEl.textContent = data.message;
+          } else {
+            messageEl.textContent = "Ошибка: " + (data.error || "Неизвестная ошибка");
+          }
+        } catch (error) {
+          messageEl.textContent = "Ошибка подключения к серверу";
+          console.error(error);
+        }
+      }
+
+      // Инициализация - загружаем текущую фразу с сервера
+      loadMessage("get");
+
+      // Сменить фразу
       document.getElementById("changeBtn").onclick = function () {
-        currentIndex = (currentIndex + 1) % messages.length;
-        messageEl.textContent = messages[currentIndex];
+        loadMessage("next");
       };
 
+      // Сброс
       document.getElementById("resetBtn").onclick = function () {
-        currentIndex = 0;
-        messageEl.textContent = messages[0];
+        loadMessage("reset");
       };
     </script>
   </body>

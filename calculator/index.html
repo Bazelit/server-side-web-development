@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Калькулятор</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0e14;
+  --surface: #16161f;
+  --surface2: #1e1e2a;
+  --border: #2a2a3a;
+  --accent: #7c6af7;
+  --accent2: #4fc3f7;
+  --orange: #ff9f43;
+  --green: #26de81;
+  --red: #fc5c65;
+  --text: #e8e8f0;
+  --muted: #6b6b8a;
+  --display-bg: #0a0a10;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Nunito', sans-serif;
+  padding: 20px;
+}
+
+/* grid background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(124,106,247,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,106,247,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+.calculator {
+  background: var(--surface);
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  padding: 20px;
+  width: 380px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(124,106,247,0.1);
+  position: relative;
+}
+
+/* accent glow top */
+.calculator::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: 20%; right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+
+/* ── Display ── */
+.display {
+  background: var(--display-bg);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  padding: 16px;
+  margin-bottom: 16px;
+  min-height: 100px;
+  position: relative;
+  overflow: hidden;
+}
+
+.display::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(124,106,247,0.05) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+#expr {
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--muted);
+  font-size: 13px;
+  min-height: 18px;
+  word-break: break-all;
+  text-align: right;
+  margin-bottom: 10px;
+  letter-spacing: 0.04em;
+  transition: color 0.2s;
+}
+
+#result {
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--text);
+  font-size: 32px;
+  font-weight: 400;
+  text-align: right;
+  word-break: break-all;
+  min-height: 40px;
+  transition: color 0.2s, transform 0.15s;
+}
+
+#result.pop {
+  animation: pop 0.15s ease;
+}
+
+@keyframes pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+#result.error {
+  color: var(--red);
+  font-size: 15px;
+}
+
+/* keyboard hint */
+.kbd-hint {
+  font-size: 10px;
+  color: var(--muted);
+  text-align: right;
+  margin-bottom: 10px;
+  letter-spacing: 0.06em;
+  opacity: 0.7;
+}
+
+/* ── Button grid ── */
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 7px;
+}
+
+button {
+  height: 52px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+
+button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background 0.15s;
+  border-radius: inherit;
+}
+
+button:hover::after  { background: rgba(255,255,255,0.06); }
+button:active        { transform: scale(0.93); }
+button:active::after { background: rgba(255,255,255,0.12); }
+
+/* Num */
+.btn-num {
+  background: var(--surface2);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+/* Operator */
+.btn-op {
+  background: rgba(124,106,247,0.12);
+  color: var(--accent);
+  border-color: rgba(124,106,247,0.25);
+}
+.btn-op:hover::after { background: rgba(124,106,247,0.1); }
+
+/* Functions */
+.btn-fn {
+  background: rgba(79,195,247,0.1);
+  color: var(--accent2);
+  border-color: rgba(79,195,247,0.2);
+  font-size: 13px;
+}
+
+/* Constants */
+.btn-const {
+  background: rgba(38,222,129,0.1);
+  color: var(--green);
+  border-color: rgba(38,222,129,0.2);
+  font-size: 14px;
+}
+
+/* Clear / Del */
+.btn-clr {
+  background: rgba(252,92,101,0.12);
+  color: var(--red);
+  border-color: rgba(252,92,101,0.25);
+}
+.btn-del {
+  background: rgba(252,92,101,0.08);
+  color: var(--red);
+  border-color: rgba(252,92,101,0.15);
+}
+
+/* Equals */
+.btn-eq {
+  background: linear-gradient(135deg, var(--accent), #5a4fd1);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 20px rgba(124,106,247,0.35);
+  font-size: 22px;
+}
+.btn-eq:hover { box-shadow: 0 4px 28px rgba(124,106,247,0.55); }
+
+/* Paren */
+.btn-par {
+  background: rgba(255,159,67,0.1);
+  color: var(--orange);
+  border-color: rgba(255,159,67,0.2);
+}
+
+/* wide (span 2 cols) */
+.w2 { grid-column: span 2; }
+
+/* ── Keyboard input ── */
+.kbd-input-row {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+#kbd-input {
+  flex: 1;
+  background: var(--display-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 15px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+#kbd-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124,106,247,0.15);
+}
+
+#kbd-submit {
+  background: linear-gradient(135deg, var(--accent), #5a4fd1);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 0 18px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: box-shadow 0.15s, transform 0.1s;
+  box-shadow: 0 4px 16px rgba(124,106,247,0.3);
+  white-space: nowrap;
+}
+
+#kbd-submit:hover { box-shadow: 0 4px 24px rgba(124,106,247,0.5); }
+#kbd-submit:active { transform: scale(0.95); }
+
+.section-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin: 12px 0 7px;
+}
+</style>
+</head>
+<body>
+
+<div class="calculator">
+
+  <!-- Display -->
+  <div class="display">
+    <div id="expr"></div>
+    <div id="result">0</div>
+  </div>
+
+  <!-- Keyboard hint -->
+  <div class="kbd-hint">↑ Числа / ( ) + − × ÷ ^ ! Enter Backspace Esc</div>
+
+  <!-- Buttons -->
+  <div class="buttons">
+
+    <!-- Row 1: control + parens -->
+    <button class="btn-clr"  onclick="clearAll()">C</button>
+    <button class="btn-del"  onclick="deleteLast()">⌫</button>
+    <button class="btn-par"  onclick="append('(')"> ( </button>
+    <button class="btn-par"  onclick="append(')')"> ) </button>
+    <button class="btn-op"   onclick="append('^')">xʸ</button>
+
+    <!-- Row 2: functions -->
+    <button class="btn-fn"   onclick="wrapFn('sqrt(')">√x</button>
+    <button class="btn-fn"   onclick="wrapFn('ln(')">ln</button>
+    <button class="btn-fn"   onclick="wrapFn('log(')">log</button>
+    <button class="btn-fn"   onclick="wrapFn('fact(')">n!</button>
+    <button class="btn-fn"   onclick="append('-')">±</button>
+
+    <!-- Row 3: constants + neg paren -->
+    <button class="btn-const" onclick="append('pi')">π</button>
+    <button class="btn-const" onclick="append('e')">e</button>
+    <button class="btn-par"   onclick="append('-(')">−(</button>
+    <button class="btn-op"    onclick="append('/')">÷</button>
+    <button class="btn-op"    onclick="append('*')">×</button>
+
+    <!-- Row 4: digits 7 8 9 -->
+    <button class="btn-num" onclick="append('7')">7</button>
+    <button class="btn-num" onclick="append('8')">8</button>
+    <button class="btn-num" onclick="append('9')">9</button>
+    <button class="btn-op"  onclick="append('-')">−</button>
+    <button class="btn-op"  onclick="append('+')">+</button>
+
+    <!-- Row 5: digits 4 5 6 -->
+    <button class="btn-num" onclick="append('4')">4</button>
+    <button class="btn-num" onclick="append('5')">5</button>
+    <button class="btn-num" onclick="append('6')">6</button>
+
+    <!-- Row 6: digits 1 2 3 + equals -->
+    <button class="btn-num" onclick="append('1')">1</button>
+    <button class="btn-num" onclick="append('2')">2</button>
+    <button class="btn-num" onclick="append('3')">3</button>
+    <button class="btn-eq  w2" onclick="calculate()" style="grid-column: span 2; grid-row: span 2">=</button>
+
+    <!-- Row 7: 0 dot -->
+    <button class="btn-num w2" onclick="append('0')" style="grid-column: span 2">0</button>
+    <button class="btn-num" onclick="append('.')">.</button>
+
+  </div>
+
+  <!-- Keyboard text input (bonus task 2) -->
+  <div class="section-label">Ввод с клавиатуры</div>
+  <div class="kbd-input-row">
+    <input type="text" id="kbd-input"
+      placeholder="Напр.: sqrt(2)^3 + fact(5)"
+      autocomplete="off" spellcheck="false"
+      onkeydown="kbdKeydown(event)" />
+    <button id="kbd-submit" onclick="calculateFrom('kbd')">Вычислить</button>
+  </div>
+
+</div>
+
+<script>
+let expr = '';
+
+// ── Display helpers ──────────────────────────────────────
+function updateDisplay() {
+  document.getElementById('expr').textContent = expr;
+}
+
+function showResult(val, isError) {
+  const el = document.getElementById('result');
+  el.textContent = val;
+  el.className = isError ? 'error' : '';
+  if (!isError) {
+    el.classList.add('pop');
+    setTimeout(() => el.classList.remove('pop'), 200);
+  }
+}
+
+// ── Button actions ───────────────────────────────────────
+function append(symbol) {
+  expr += symbol;
+  updateDisplay();
+}
+
+// Wrap current expression in a function call
+function wrapFn(fn) {
+  expr += fn;
+  updateDisplay();
+}
+
+function deleteLast() {
+  // Remove last token (handles multi-char like "sqrt(", "pi", "ln(", "fact(")
+  const tokens = [
+    /sqrt\($/, /ln\($/, /log\($/, /fact\($/, /pi$/, /e$/
+  ];
+  for (const re of tokens) {
+    if (re.test(expr)) { expr = expr.replace(re, ''); updateDisplay(); return; }
+  }
+  expr = expr.slice(0, -1);
+  updateDisplay();
+}
+
+function clearAll() {
+  expr = '';
+  updateDisplay();
+  showResult('0', false);
+}
+
+// ── Network ──────────────────────────────────────────────
+async function calculate() {
+  if (!expr.trim()) return;
+  await sendExpr(expr);
+}
+
+async function calculateFrom(src) {
+  let e = '';
+  if (src === 'kbd') {
+    e = document.getElementById('kbd-input').value.trim();
+  } else {
+    e = expr;
+  }
+  if (!e) return;
+  await sendExpr(e, src);
+}
+
+async function sendExpr(e, src) {
+  const body = new URLSearchParams({ expr: e });
+  try {
+    const resp = await fetch('calc.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body
+    });
+    const data = await resp.json();
+
+    if (data.error) {
+      showResult(data.error, true);
+    } else {
+      const url = new URL(window.location.href);
+      url.searchParams.set('result', data.result);
+      history.replaceState(null, '', url);
+
+      showResult(data.result, false);
+      document.getElementById('expr').textContent = e + ' =';
+      expr = data.result;
+      updateDisplay();
+      if (src === 'kbd') {
+        document.getElementById('kbd-input').value = '';
+      }
+    }
+  } catch {
+    showResult('Ошибка соединения', true);
+  }
+}
+
+// ── Keyboard support (button area) ───────────────────────
+document.addEventListener('keydown', (e) => {
+  // Don't intercept when typing in text input
+  if (document.activeElement.id === 'kbd-input') return;
+
+  if ('0123456789.()'.includes(e.key)) { append(e.key); return; }
+  if (e.key === '+') { append('+'); return; }
+  if (e.key === '-') { append('-'); return; }
+  if (e.key === '*') { append('*'); return; }
+  if (e.key === '/') { e.preventDefault(); append('/'); return; }
+  if (e.key === '^') { append('^'); return; }
+  if (e.key === '!') { append('fact('); return; }
+  if (e.key === 'Enter' || e.key === '=') { calculate(); return; }
+  if (e.key === 'Backspace') { deleteLast(); return; }
+  if (e.key === 'Escape')    { clearAll();   return; }
+});
+
+// ── Keyboard text input keydown ───────────────────────────
+function kbdKeydown(e) {
+  if (e.key === 'Enter') { calculateFrom('kbd'); }
+}
+</script>
+
+</body>
+</html>

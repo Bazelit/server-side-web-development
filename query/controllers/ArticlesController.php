@@ -1,37 +1,40 @@
 <?php
-// controllers/ArticlesController.php
 
 class ArticlesController {
 
-    private function getArticleById($id) {
-        $articles = [
-            1 => [
-                'id' => 1,
-                'title' => 'Статья 1',
-                'content' => 'Всем привет, это текст первой статьи',
-                'user_id' => 1,
-            ],
-            2 => [
-                'id' => 2,
-                'title' => 'Статья 2',
-                'content' => 'Всем привет, это текст второй статьи',
-                'user_id' => 2,
-            ],
-        ];
+    private PDO $pdo;
 
-        return isset($articles[$id]) ? $articles[$id] : null;
+    public function __construct() {
+        $host = 'localhost';
+        $dbname = 'blog';
+        $user = 'postgres';
+        $password = '1234';
+
+        $this->pdo = new PDO(
+            "pgsql:host=$host;dbname=$dbname",
+            $user,
+            $password,
+            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+        );
     }
 
-    private function getAuthorNicknameById($userId) {
-        $users = [
-            1 => ['id' => 1, 'nickname' => 'ivan'],
-            2 => ['id' => 2, 'nickname' => 'anna'],
-        ];
+    private function getArticleById(int $id): ?array {
+        $stmt = $this->pdo->prepare('SELECT id, title, content, user_id FROM articles WHERE id = :id');
+        $stmt->execute([':id' => $id]);
+        $article = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return isset($users[$userId]) ? $users[$userId]['nickname'] : null;
+        return $article ?: null;
     }
 
-    public function show($id) {
+    private function getAuthorNicknameById(int $userId): ?string {
+        $stmt = $this->pdo->prepare('SELECT nickname FROM users WHERE id = :id');
+        $stmt->execute([':id' => $userId]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $user ? $user['nickname'] : null;
+    }
+
+    public function show(int $id): void {
         $article = $this->getArticleById($id);
 
         if (!$article) {

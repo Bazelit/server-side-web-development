@@ -1,32 +1,64 @@
 <?php
 
-class Cat
+// БАЗОВЫЙ (РОДИТЕЛЬСКИЙ) КЛАСС
+class Lesson
 {
-    private $name;
-    private $color; // Made private
+    // protected — видно в классе и в наследниках (но не снаружи)
+    protected $title;
+    protected $text;
+    protected $homework;
 
-    public function __construct(string $name, string $color) // Added color parameter
+    public function __construct(string $title, string $text, string $homework)
     {
-        $this->name = $name;
-        $this->color = $color;
+        $this->title = $title;
+        $this->text = $text;
+        $this->homework = $homework;
     }
 
-    public function sayHello(): string
+    // Геттеры для родительских свойств
+    public function getTitle(): string { return $this->title; }
+    public function getText(): string { return $this->text; }
+    public function getHomework(): string { return $this->homework; }
+}
+
+// НАСЛЕДНИК — расширяет функционал родителя
+class PaidLesson extends Lesson
+{
+    // НОВОЕ свойство — только у платного урока
+    private $price;
+
+    // КОНСТРУКТОР: вызывает родительский конструктор + добавляет свое
+    public function __construct(string $title, string $text, string $homework, float $price)
     {
-        return "Meow! My name is {$this->name}. I am {$this->color}.";
+        // parent::__construct() — вызывает конструктор класса Lesson
+        parent::__construct($title, $text, $homework);
+        $this->price = $price;
     }
 
-    // Getter for color property
-    public function getColor(): string
+    // ГЕТТЕР для цены
+    public function getPrice(): float
     {
-        return $this->color;
+        return $this->price;
+    }
+
+    // СЕТТЕР для изменения цены
+    public function setPrice(float $price): void
+    {
+        $this->price = $price;
     }
 }
 
-// Example usage
-$cat = new Cat('Murka', 'ginger');
-echo $cat->sayHello(); // Meow! My name is Murka. I am ginger.
-echo "\n";
-echo $cat->getColor(); // ginger
+// СОЗДАЕМ ОБЪЕКТ ПЛАТНОГО УРОКА
+$paidLesson = new PaidLesson(
+    'Урок о наследовании в PHP',   // заголовок
+    'Лол, кек, чебурек',           // текст
+    'Ложитесь спать, утро вечера мудренее', // домашка
+    99.90                           // цена
+);
 
+// Выводим ВСЮ структуру объекта
+var_dump($paidLesson);
+
+// Результат: объект содержит и родительские свойства (title, text, homework)
+// И новое свойство price
 ?>

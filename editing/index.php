@@ -25,7 +25,18 @@ require_once 'controllers/ArticleController.php';
 // Контроллер
 class BlogController {
     
+    private function getConnection() {
+        $pdo = new PDO('pgsql:host=localhost;dbname=blog', 'postgres', '1234', [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        ]);
+        return $pdo;
+    }
+    
     public function index() {
+        $pdo = $this->getConnection();
+        $stmt = $pdo->query('SELECT * FROM articles ORDER BY id');
+        $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
         include 'views/main.php';
     }
     
