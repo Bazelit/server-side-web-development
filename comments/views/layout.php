@@ -4,19 +4,6 @@
     <meta charset="UTF-8">
     <title><?php echo htmlspecialchars($pageTitle ?? 'Мой блог'); ?></title>
     <link rel="stylesheet" href="/styles/styles.css">
-    <style>
-        body { margin: 0; padding: 0; font-family: Arial, sans-serif; background: #f3f3f3; }
-        .layout { width: 100%; max-width: 1200px; margin: 0 auto; border-collapse: collapse; }
-        .header { background: #2c3e50; color: white; padding: 24px; font-size: 24px; }
-        .content { background: white; padding: 24px; vertical-align: top; }
-        .sidebar { background: #fafafa; padding: 24px; vertical-align: top; }
-        .footer { background: #2c3e50; color: white; text-align: center; padding: 14px; font-size: 14px; }
-        .sidebarHeader { font-weight: bold; margin-bottom: 12px; }
-        .sidebar ul { list-style: none; padding-left: 0; }
-        .sidebar li { margin-bottom: 10px; }
-        .sidebar a { color: #2c3e50; text-decoration: none; }
-        .sidebar a:hover { text-decoration: underline; }
-    </style>
 </head>
 <body>
 
