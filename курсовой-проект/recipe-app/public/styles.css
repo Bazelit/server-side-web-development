@@ -1,0 +1,6 @@
+/* Простые стили для учебного проекта */
+body { background:#fafafa; }
+a { color: #1a73e8; text-decoration:none; }
+a:hover { text-decoration:underline; }
+input, textarea { width:100%; max-width:600px; }
+.ingredients { list-style: none; padding-left: 0; }
